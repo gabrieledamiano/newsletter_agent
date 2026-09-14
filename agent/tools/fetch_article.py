@@ -11,8 +11,8 @@ from functools import lru_cache
 from pathlib import Path
 
 MOCK_PATH = Path(__file__).resolve().parents[2] / "data" / "mock_articles.json"
-TIMEOUT_S = 10
-MAX_CONTENT_CHARS = 1500  # Tronca articoli troppo lunghi per il contesto LLM
+TIMEOUT_S = 5
+MAX_CONTENT_CHARS = 800  # Tronca articoli troppo lunghi per il contesto LLM
 
 
 # ---------------------------------------------------------------------------
@@ -39,6 +39,31 @@ TOOL_DECLARATION = {
     },
 }
 
+
+# ROSARIO : Reso l'header più corposo per evitare di essere bloccati dai firewall di scraping
+
+BROWSER_HEADERS = {
+    "User-Agent": (
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
+        "(KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36"
+    ),
+    "Accept": (
+        "text/html,application/xhtml+xml,application/xml;q=0.9,"
+        "image/avif,image/webp,*/*;q=0.8"
+    ),
+    "Accept-Language": "it-IT,it;q=0.9,en-US;q=0.8,en;q=0.7",
+    "Accept-Encoding": "gzip, deflate, br",
+    "DNT": "1",
+    "Connection": "keep-alive",
+    "Upgrade-Insecure-Requests": "1",
+    "Sec-Fetch-Dest": "document",
+    "Sec-Fetch-Mode": "navigate",
+    "Sec-Fetch-Site": "none",
+    "Sec-Fetch-User": "?1",
+    "Sec-CH-UA": '"Chromium";v="122", "Not(A:Brand";v="24", "Google Chrome";v="122"',
+    "Sec-CH-UA-Mobile": "?0",
+    "Sec-CH-UA-Platform": '"Windows"',
+}
 
 # ---------------------------------------------------------------------------
 # Punto di ingresso
@@ -75,9 +100,7 @@ def _fetch_live(url: str) -> dict:
     import requests
     import trafilatura
 
-    response = requests.get(url, timeout=TIMEOUT_S, headers={
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36"
-    })
+    response = requests.get(url, timeout=TIMEOUT_S, headers=BROWSER_HEADERS)
     response.raise_for_status()
 
     extracted = trafilatura.extract(
@@ -96,6 +119,11 @@ def _fetch_live(url: str) -> dict:
 
     # Tronca se troppo lungo
     content = extracted[:MAX_CONTENT_CHARS]
+    
+    # ROSARIO : Aggiunta la difesa sulle pagine di indice con poco contenuto
+    if len(extracted.split()) < 200:
+        return {"success": False, "reason": "content_too_short_likely_index_page", "url": url}
+    
     if len(extracted) > MAX_CONTENT_CHARS:
         content += "\n[... contenuto troncato ...]"
 

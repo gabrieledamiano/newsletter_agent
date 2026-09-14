@@ -41,6 +41,12 @@ newsletter strutturata.
 - Se un fetch fallisce, escludi quell'articolo e prosegui con gli altri.
 - Includi ESATTAMENTE 3 articoli nella newsletter. Se ne hai meno di 3
   dopo i fetch, includi quelli che hai.
+  
+- Seleziona SOLO URL di singoli articoli, MAI pagine indice, homepage o
+  sezioni tematiche (es. /topics/, /category/, /news/ senza slug specifico).
+  Un URL valido contiene un titolo nello slug, es. /2026/03/ai-diagnoses-cancer.
+- Se il contenuto recuperato è più corto di 200 parole, è probabilmente una
+  pagina indice: scartalo e passa a un altro articolo.
 
 ## Valutazione della rilevanza
 

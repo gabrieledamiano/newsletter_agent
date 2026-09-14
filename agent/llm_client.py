@@ -46,6 +46,20 @@ class LLMTurn:
 class LLMBackend(Protocol):
     def step(self, history: list[dict], tools: list[dict]) -> LLMTurn: ...
     def complete_text(self, prompt: str) -> str: ...
+    
+    
+## AGGIUNTA ROSARIO 
+# Possibile fix : la struct ToolCall sopra si aspetta come campo
+# Arguments un dict[str, any]
+# Gemma potrebbe invece generare un stringa
+# Questa funzioen ci serve a forza il mapping e la usiamo ovunque ci sia il comando ToolCall
+def _coerce_args(raw) -> dict:
+    if isinstance(raw,str):
+        try:
+            return json.loads(raw)
+        except json.JSONDecodeError:
+            return{}
+    return raw or {}
 
 
 # ---------------------------------------------------------------------------
@@ -53,40 +67,52 @@ class LLMBackend(Protocol):
 # ---------------------------------------------------------------------------
 
 class GeminiBackend:
+    
     def __init__(self, model: str = DEFAULT_MODEL, api_key: str | None = None):
         from google import genai
+        
         key = api_key or os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY")
+        
         if not key:
             raise RuntimeError(
                 "Nessuna API key trovata. Imposta GEMINI_API_KEY nel file .env"
             )
+            
         self._client = genai.Client(api_key=key)
         self.model = model
 
     def step(self, history: list[dict], tools: list[dict]) -> LLMTurn:
+        
         interaction = self._client.interactions.create(
             model=self.model, store=False, input=history, tools=tools,
         )
+        
         history_steps = [step.model_dump() for step in interaction.steps]
+        
         calls = [
-            ToolCall(id=step.id, name=step.name, arguments=step.arguments or {})
+            # ROSARIO: Usiamo la funzione Helper per forza i parametri in un dictionary
+            ToolCall(id=step.id, name=step.name, arguments=_coerce_args(step.arguments))
             for step in interaction.steps
             if step.type == "function_call"
         ]
+        
         return LLMTurn(
             tool_calls=calls,
             text=getattr(interaction, "output_text", None),
             history_steps=history_steps,
         )
 
+    
+
     def complete_text(self, prompt: str) -> str:
+        
         interaction = self._client.interactions.create(
             model=self.model, store=False,
             input=[{"type": "user_input",
                     "content": [{"type": "text", "text": prompt}]}],
         )
+        
         return getattr(interaction, "output_text", "") or ""
-
 
 # ---------------------------------------------------------------------------
 # ScriptedBackend — simulatore deterministico
@@ -270,5 +296,8 @@ def build_backend(
     *, offline: bool = False, model: str = DEFAULT_MODEL
 ) -> LLMBackend:
     if offline:
+        # Scripted Backend sarebbe il modello simulato in offline
         return ScriptedBackend()
+    
+    #A noi interessa usare questo, ovvero il modello tramite api-key
     return GeminiBackend(model=model)

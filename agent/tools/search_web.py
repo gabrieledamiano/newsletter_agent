@@ -14,6 +14,39 @@ from functools import lru_cache
 MOCK_PATH = Path(__file__).resolve().parents[2] / "data" / "mock_search_results.json"
 
 
+#ROSARIO: Aggiunto controllo d'isteresi sulle chiamate successive
+#Evitiamo che chiamate frequenti vengano bloccate dal server duckduckgosearch
+# AI CAPITO COMO FUNZIONEEEEEE
+
+#Intervallo di tempo tra le due chiamate successive
+min_intervallo_seconds= 0.3
+
+#Variabile di stato per tenere conto di quando è avvenuta
+#la precedente chiamata
+_call_precedente_ts = 0.0 
+
+# AGGIORNATO PACCHETTO
+from ddgs import DDGS
+import time
+
+def _Isteresi() -> None:
+    """Garantisce almeno un intervallo tra due chiamate consecutive al server DDGS."""
+    
+    global _call_precedente_ts
+    
+    elapsed = time.monotonic() - _call_precedente_ts
+    
+    wait = min_intervallo_seconds - elapsed
+    
+    if wait > 0:
+        # se non è ancora passato l'intervallo
+        time.sleep(wait)
+        
+    # Se è passato resettiamo, impostando il nuovo valore di _call_precedente
+    _call_precedente_ts = time.monotonic()
+
+
+
 # ---------------------------------------------------------------------------
 # Dichiarazione mostrata al modello
 # ---------------------------------------------------------------------------
@@ -129,25 +162,37 @@ def search_web_articles(
 # Backend live — DuckDuckGo (con isteresi/cache e debug)
 # ---------------------------------------------------------------------------
 
-@lru_cache(maxsize=16)
 def _search_live(query: str, max_results: int) -> dict:
-    from duckduckgo_search import DDGS
-    
+    from ddgs import DDGS
+
     clean_query = query.strip().lower()
     print(f"[DEBUG search_web] 🌐 Esecuzione chiamata LIVE su DuckDuckGo per la query: '{clean_query}'")
 
     try:
+        _Isteresi()
+
+        print(f"[DEBUG search_web] ➡️  INPUT → query={clean_query!r} max_results={max_results!r} "
+              f"(tipi: {type(clean_query).__name__}, {type(max_results).__name__})")
+
         with DDGS() as ddgs:
             raw = list(ddgs.text(clean_query, max_results=max_results))
+
     except Exception as e:
-        print(f"[DEBUG search_web] ⚠️ Eccezione di rete catturata: {e}")
+        print(f"[DEBUG search_web] ⚠️ Eccezione di rete catturata: {type(e).__name__}: {e}")
         raise e
 
+    print(f"[DEBUG search_web] ⬅️  RAW → {len(raw)} elementi, tipo: {type(raw).__name__}")
+
     if not raw:
-        print(f"[DEBUG search_web] ❌ Nessun risultato trovato per '{clean_query}'")
+        print("[DEBUG search_web] ⚠️  Lista vuota — possibile rate limit o query senza match")
         return {"found": False, "results": [], "results_count": 0, "source": "duckduckgo"}
 
+    print(f"[DEBUG search_web] 🔑 CHIAVI primo elemento: {list(raw[0].keys())}")
+    for i, item in enumerate(raw):
+        print(f"[DEBUG search_web]   [{i}] {str(item)[:200]}")
+
     print(f"[DEBUG search_web] ✅ Trovati {len(raw)} risultati per '{clean_query}'")
+
     results = []
     for item in raw:
         results.append({

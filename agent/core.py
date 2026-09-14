@@ -71,6 +71,10 @@ def process_topic(
     decision: AgentDecision | None = None
 
     for iteration in range(1, max_iterations + 1):
+        
+        # TIMER DEBUG DELL'ITERAZIONE COMPLETA        
+        t_step = time.time()
+
         try:
             turn = backend.step(history, TOOL_DECLARATIONS)
         except Exception as exc:
@@ -83,11 +87,18 @@ def process_topic(
                 on_event(evt)
             break
 
+        print(f"[TIMING] iter {iteration} — backend.step: {time.time() - t_step:.1f}s")
+        
         history.extend(turn.history_steps)
 
         if turn.tool_calls:
             for call in turn.tool_calls:
+                
+                #TIMER DEBUG DELLA CHIAMATA DEL TOOL
+                t_tool = time.time()
                 result = execute_tool(call.name, call.arguments, offline=offline)
+                print(f"[TIMING] {call.name}: {time.time() - t_tool:.1f}s")
+                
                 tool_calls_count += 1
 
                 summary = _summarize_result(call.name, result)

@@ -6,3 +6,6 @@ trafilatura>=1.12
 duckduckgo-search>=6.3
 python-dotenv>=1.0
 pytest>=8.0
+
+lxml_html_clean
+ddgs
