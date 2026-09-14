@@ -1,0 +1,57 @@
+{
+  "queries": {
+    "AI in medicina": [
+      {
+        "title": "Come l'intelligenza artificiale sta trasformando la diagnostica per immagini",
+        "url": "https://example.com/ai-diagnostica-immagini",
+        "snippet": "Nuovi modelli di deep learning raggiungono accuratezze superiori al 95% nella rilevazione di tumori polmonari da TAC, aprendo la strada a screening di massa più efficaci.",
+        "source": "Il Sole 24 Ore - Sanità",
+        "published_date": "2026-09-10"
+      },
+      {
+        "title": "GPT-4 supera i medici nella diagnosi differenziale: lo studio del NEJM",
+        "url": "https://example.com/gpt4-diagnosi-nejm",
+        "snippet": "Uno studio pubblicato sul New England Journal of Medicine mostra che GPT-4 formula diagnosi differenziali corrette nel 72% dei casi complessi, contro il 64% dei medici generalisti.",
+        "source": "Nature Italy",
+        "published_date": "2026-09-08"
+      },
+      {
+        "title": "L'UE approva il primo farmaco progettato interamente da un'AI",
+        "url": "https://example.com/ue-farmaco-ai",
+        "snippet": "L'EMA ha dato il via libera a un inibitore della chinasi scoperto e ottimizzato da un sistema di AI generativa di Insilico Medicine, riducendo i tempi di sviluppo da 5 anni a 18 mesi.",
+        "source": "ANSA Scienza",
+        "published_date": "2026-09-12"
+      },
+      {
+        "title": "Rischi etici dell'AI in sanità: il rapporto dell'OMS 2026",
+        "url": "https://example.com/oms-rischi-ai",
+        "snippet": "L'Organizzazione Mondiale della Sanità pubblica le nuove linee guida sull'uso responsabile dell'intelligenza artificiale in ambito clinico, con focus su bias algoritmici e consenso informato.",
+        "source": "WHO Press Release",
+        "published_date": "2026-09-06"
+      },
+      {
+        "title": "Ricetta per la torta di mele della nonna",
+        "url": "https://example.com/torta-mele",
+        "snippet": "La classica torta di mele con pasta frolla e crema pasticcera, perfetta per l'autunno.",
+        "source": "Blog di Cucina",
+        "published_date": "2026-09-11"
+      }
+    ],
+    "novità intelligenza artificiale medicina 2026": [
+      {
+        "title": "AI e chirurgia robotica: i risultati del trial clinico italiano",
+        "url": "https://example.com/ai-chirurgia-robotica",
+        "snippet": "Il Policlinico Gemelli pubblica i risultati di un trial su 200 pazienti: la chirurgia assistita da AI riduce del 30% le complicanze post-operatorie nella chirurgia laparoscopica.",
+        "source": "Corriere della Sera - Salute",
+        "published_date": "2026-09-09"
+      },
+      {
+        "title": "Come l'intelligenza artificiale sta trasformando la diagnostica per immagini",
+        "url": "https://example.com/ai-diagnostica-immagini",
+        "snippet": "Nuovi modelli di deep learning raggiungono accuratezze superiori al 95% nella rilevazione di tumori polmonari da TAC.",
+        "source": "Il Sole 24 Ore - Sanità",
+        "published_date": "2026-09-10"
+      }
+    ]
+  }
+}
