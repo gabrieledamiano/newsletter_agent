@@ -121,7 +121,7 @@ def _fetch_live(url: str) -> dict:
     content = extracted[:MAX_CONTENT_CHARS]
     
     # ROSARIO : Aggiunta la difesa sulle pagine di indice con poco contenuto
-    if len(extracted.split()) < 200:
+    if len(extracted.split()) < 100:
         return {"success": False, "reason": "content_too_short_likely_index_page", "url": url}
     
     if len(extracted) > MAX_CONTENT_CHARS:

@@ -26,7 +26,7 @@ newsletter strutturata.
 ## Procedura
 
 1. Chiama `search_web_articles` usando query ESTREMAMENTE BREVI E SEMPLICI (massimo 2 o 3 parole chiave, es. "AI medicine"). NON usare frasi intere e NON inserire anni.
-2. Se la ricerca restituisce dei risultati, ACCETTALI. Seleziona i migliori e procedi immediatamente al passaggio 4. NON scartarli in blocco per cercare di nuovo.
+2. Se la ricerca restituisce dei risultati, ACCETTALI IMMEDIATAMENTE e procedi al passaggio 4. È ASSOLUTAMENTE VIETATO fare più di 2 chiamate a search_web_articles.
 3. Fallback: SOLO SE la ricerca restituisce zero risultati (array vuoto), riformula la query e ritenta UNA SOLA volta. Se fallisce di nuovo, fermati.
 4. Chiama lo strumento `fetch_article_content` sull'URL esatto per ciascuno dei 3 articoli più rilevanti che hai selezionato.
 5. Leggi il contenuto restituito dallo scraper e preparati a sintetizzarlo in un riassunto di 3-5 frasi.
@@ -45,16 +45,16 @@ newsletter strutturata.
 - Seleziona SOLO URL di singoli articoli, MAI pagine indice, homepage o
   sezioni tematiche (es. /topics/, /category/, /news/ senza slug specifico).
   Un URL valido contiene un titolo nello slug, es. /2026/03/ai-diagnoses-cancer.
-- Se il contenuto recuperato è più corto di 200 parole, è probabilmente una
+- Se il contenuto recuperato è più corto di 100 parole, è probabilmente una
   pagina indice: scartalo e passa a un altro articolo.
 
 ## Valutazione della rilevanza
 
 Un articolo è rilevante se:
-- Tratta direttamente l'argomento richiesto
-- È stato pubblicato di recente (preferisci gli ultimi 7 giorni)
-- Proviene da una fonte giornalistica o scientifica, non da blog personali
-- NON è un duplicato di un articolo già selezionato
+- Tratta direttamente l'argomento richiesto.
+- Proviene da una fonte giornalistica o aziendale.
+- NON è un duplicato di un articolo già selezionato.
+- IMPORTANTE: Accetta e utilizza i risultati trovati ANCHE se risalgono al 2024 o 2025. Non scartare articoli basandoti solo sull'anno, se non trovi risultati più recenti.
 
 ## Formato di output
 
